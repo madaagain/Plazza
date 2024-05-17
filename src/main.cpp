@@ -4,17 +4,23 @@
 ** File description:
 ** main
 */
+
 #include "Parser.hpp"
 #include "Kitchen.hpp"
+#include "LoopClass.hpp"
+#include "LoopParser.hpp"
 
 int main(int ac, char **av)
 {
     try
     {
         Parser args(ac, av);
-    } catch (std::exception &e)
+        LoopClass loop;
+        loop.Loop();
+    } 
+    catch (const std::exception &e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return 84;
     }
     return 0;

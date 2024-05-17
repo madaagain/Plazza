@@ -29,9 +29,10 @@ Parser::Parser(int ac, char **av)
     }
 
     std::stringstream arg3(av[3]);
-    arg3 >> _cookingtime;
+    arg3 >> _stocktimer;
     if (arg3.fail() || _stocktimer <= 0)
     {
+        printf("Arg value:%s\n", av[3]);
         throw ParserException{"Third argument must be an int > 0 for restock timer."};
     }
 }
