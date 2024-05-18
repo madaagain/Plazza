@@ -46,5 +46,6 @@ int Cook::getId() const {
 
 void* Cook::cookRoutine(void* arg)
 {
+    (void) arg;
     return nullptr;
 }
