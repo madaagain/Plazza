@@ -12,7 +12,9 @@ add_executable(plazza
         src/main.cpp
         src/threading_utils/Pthreadmutex.cpp
         src/parsing/Parser.cpp
-        src/plazza/Kitchen.cpp)
+        src/plazza/Kitchen.cpp
+        src/plazza/Reception.cpp
+        src/plazza/Cook.cpp)
 
 target_include_directories(plazza PUBLIC
         include)
