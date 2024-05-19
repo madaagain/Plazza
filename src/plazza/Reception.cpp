@@ -6,6 +6,7 @@
 */
 
 #include "Reception.hpp"
+#include "../include/LoopParser.hpp"
 
 Reception::Reception(int numCooksPerKitchen, int ingredientRegenerationTime, float cookingTimeMultiplier) :
     _numCooksPerKitchen(numCooksPerKitchen), _ingredientRegenerationTime(ingredientRegenerationTime),
@@ -16,6 +17,7 @@ Reception::Reception(int numCooksPerKitchen, int ingredientRegenerationTime, flo
 
 Reception::~Reception()
 {
+
 }
 
 void Reception::createKitchen()
@@ -38,21 +40,28 @@ void Reception::printHelp()
     std::cout << "If you are done for the day, just say 'exit'" << std::endl;
 }
 
+/** @brief Main Loop of the programm get the orders, parse them and redistribute them*/
 void Reception::start()
 {
-    std::string command;
     std::cout << "Welcome to Plazza's Pizzas, may we have your order ?" << std::endl;
+    LoopParser OrderParser;
 
     while (true)
     {
-        std::getline(std::cin, command);
-        if (command == "help")
+        std::getline(std::cin, _inputLine);
+        OrderParser.setOrderInput(_inputLine); //Ca nous permet de pouvoir ensuite de save l'input pour la str dans _OrderInput 
+
+        if (_inputLine == "help")
         {
             printHelp();
+            continue;
         }
-        if (command == "exit")
+        if (_inputLine == "exit")
         {
             break;
         }
+
+        OrderParser.ArgCommandLine();
     }
 }
+

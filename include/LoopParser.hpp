@@ -12,6 +12,7 @@
 #include <stdexcept>
 #include <thread>
 #include <chrono>
+#include <sstream>
 
 class LoopParser {
     public:
@@ -19,10 +20,15 @@ class LoopParser {
         virtual ~LoopParser();
         void ArgCommandLine();
         void OrdersToList(const std::string& type, const std::string& size, int quantity);
+        void OrderHandling();
+        void setOrderInput(const std::string& input);
         void PrintDebug() const;
+        std::string& trim(std::string& str);
+        std::string removeSpacesAroundX(const std::string& input);
         void clearOrders();
     protected:
-    std::string OrderInput;
+    std::string _OrderInput;
+    std::string _tmpStrCommand;
     private:
         struct Order {
             std::string type;
