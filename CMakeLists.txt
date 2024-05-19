@@ -3,7 +3,7 @@ project(plazza)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_compile_options(-Wall -Wextra -Werror)
+add_compile_options(-Wall -Wextra)
 
 set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
         ${PROJECT_SOURCE_DIR}/plazza)
@@ -16,7 +16,6 @@ add_executable(plazza
         src/plazza/Kitchen.cpp
         src/plazza/Reception.cpp
         src/plazza/Cook.cpp
-        src/parsing/programLoop.cpp
         src/parsing/LoopParser.cpp)
 
 target_include_directories(plazza PUBLIC
