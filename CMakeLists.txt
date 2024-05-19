@@ -11,6 +11,7 @@ set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES
 add_executable(plazza
         src/main.cpp
         src/threading_utils/Pthreadmutex.cpp
+        src/threading_utils/PthreadThread.cpp
         src/parsing/Parser.cpp
         src/plazza/Kitchen.cpp
         src/plazza/Reception.cpp

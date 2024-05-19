@@ -17,6 +17,8 @@ class Reception {
         Reception(int numCooksPerKitchen, int ingredientRegenerationTime, float cookingTimeMultiplier);
         ~Reception();
         void createKitchen();
+        void start();
+        void printHelp();
 
     protected:
     private:

@@ -13,7 +13,7 @@ int main(int ac, char **av)
     {
         Parser args(ac, av);
         Reception recep(args.getnbcooks(), args.getstocktimer(), args.getcookingtime());
-        recep.createKitchen();
+        recep.start();
     } catch (std::exception &e)
     {
         std::cerr << e.what() << std::endl;
