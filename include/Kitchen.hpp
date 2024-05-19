@@ -29,9 +29,26 @@ class Kitchen {
                 };
                 ~KitchenException() {};
         };
+    class Stock
+        {
+            public:
+                Stock() : 
+                dough(5), gruyere(5), tomato(5), ham(5), mushroom(5), steak(5), eggplant(5), cheese(5)
+                {};
+                ~Stock() {};
+                int dough;
+                int gruyere;
+                int tomato;
+                int ham;
+                int mushroom;
+                int steak;
+                int eggplant;
+                int cheese;
+        };
     protected:
     private:
         int _pid;
+        Stock _stock;
 };
 
 #endif /* !KITCHEN_HPP_ */

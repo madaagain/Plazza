@@ -22,7 +22,7 @@ Parser::Parser(int ac, char **av)
     }
 
     std::stringstream arg2(av[2]);
-    arg2 >> _cookingtime;
+    arg2 >> _nbcooks;
     if (arg2.fail() || _nbcooks <= 0)
     {
         throw ParserException{"Second argument must be an int > 0 for number of cooks."};

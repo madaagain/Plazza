@@ -6,7 +6,7 @@
 */
 
 #include "Parser.hpp"
-#include "Kitchen.hpp"
+#include "Reception.hpp"
 #include "LoopClass.hpp"
 #include "LoopParser.hpp"
 
@@ -15,6 +15,9 @@ int main(int ac, char **av)
     try
     {
         Parser args(ac, av);
+        Reception recep(args.getnbcooks(), args.getstocktimer(), args.getcookingtime());
+        recep.start();
+    } catch (std::exception &e)
         LoopClass loop;
         loop.Loop();
     } 
