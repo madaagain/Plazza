@@ -15,7 +15,9 @@ add_executable(plazza
         src/parsing/Parser.cpp
         src/plazza/Kitchen.cpp
         src/plazza/Reception.cpp
-        src/plazza/Cook.cpp)
+        src/plazza/Cook.cpp
+        src/parsing/programLoop.cpp
+        src/parsing/LoopParser.cpp)
 
 target_include_directories(plazza PUBLIC
         include)

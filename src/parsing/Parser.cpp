@@ -32,6 +32,7 @@ Parser::Parser(int ac, char **av)
     arg3 >> _stocktimer;
     if (arg3.fail() || _stocktimer <= 0)
     {
+        printf("Arg value:%s\n", av[3]);
         throw ParserException{"Third argument must be an int > 0 for restock timer."};
     }
 }
