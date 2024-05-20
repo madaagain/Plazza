@@ -13,6 +13,7 @@
 #include <thread>
 #include <chrono>
 #include <sstream>
+#include <cctype>
 
 class LoopParser {
     public:
@@ -20,11 +21,15 @@ class LoopParser {
         virtual ~LoopParser();
         void ArgCommandLine();
         void OrdersToList(const std::string& type, const std::string& size, int quantity);
-        void OrderHandling();
+        bool OrderHandling();
         void setOrderInput(const std::string& input);
         void PrintDebug() const;
         std::string& trim(std::string& str);
-        std::string removeSpacesAroundX(const std::string& input);
+        bool CheckValidSize(const char *str);
+        bool isSizeValid(const char *sizeStr);
+        //std::string removeSpacesAroundX(const std::string& input);
+        void formatOrder(std::string& str);
+        bool isSize(const char *str, int i);
         void clearOrders();
     protected:
     std::string _OrderInput;
