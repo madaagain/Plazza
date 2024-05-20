@@ -29,34 +29,49 @@ void LoopParser::ArgCommandLine()
         return;
     }
 
-    OrderHandling(); // Parse et traite chaque commande
+    if (!OrderHandling()) {
+        std::cout << "Command processing aborted due to errors." << std::endl;
+        return;
+    }
 
-    PrintDebug(); // Affiche les commandes actuelles stockées
+    PrintDebug(); // Ici je Display les Order de pizza dans la liste
     std::cout << "Processing command: " << _OrderInput << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "Command processed." << std::endl;
 }
 
-void LoopParser::OrderHandling()
+bool LoopParser::OrderHandling()
 {
     std::istringstream commandStream(_OrderInput);
+    std::string tmpStrCommand;
+    bool allCommandsValid = true;
 
-    while (std::getline(commandStream, _tmpStrCommand, ';')) {
-        trim(_tmpStrCommand);
+    /** @brief Not functionnal error condition checker
+     * 
+    if (!CheckValidSize(_OrderInput.c_str())) {
+        std::cerr << "Order rejected due to invalid pizza size." << std::endl;
+        return false;
+    }
+    */
 
-        std::istringstream detailStream(_tmpStrCommand);
+    while (std::getline(commandStream, tmpStrCommand, ';')) {
+        formatOrder(tmpStrCommand);
+
+        std::istringstream detailStream(tmpStrCommand);
         std::string type, sizeQuantity;
         std::string size;
         int quantity;
 
         if (!(detailStream >> type >> sizeQuantity)) {
-            std::cerr << "Failed to parse command: " << _tmpStrCommand << std::endl;
+            std::cerr << "Failed to parse command: " << tmpStrCommand << std::endl;
+            allCommandsValid = false;
             continue;
         }
 
         size_t xPos = sizeQuantity.find('x');
         if (xPos == std::string::npos || xPos == 0 || xPos == sizeQuantity.size() - 1) {
-            std::cerr << "Invalid size and quantity format in command: " << _tmpStrCommand << std::endl;
+            std::cerr << "Invalid size and quantity format in command: " << tmpStrCommand << std::endl;
+            allCommandsValid = false;
             continue;
         }
 
@@ -64,14 +79,68 @@ void LoopParser::OrderHandling()
             size = sizeQuantity.substr(0, xPos);
             quantity = std::stoi(sizeQuantity.substr(xPos + 1));
         } catch (const std::exception& e) {
-            std::cerr << "Error parsing size or quantity from '" << sizeQuantity << "' in command: " << _tmpStrCommand << std::endl;
+            std::cerr << "Error parsing size or quantity from '" << sizeQuantity << "' in command: " << tmpStrCommand << std::endl;
+            allCommandsValid = false;
             continue;
         }
 
         OrdersToList(type, size, quantity);
     }
+
+    return allCommandsValid;
 }
 
+void LoopParser::formatOrder(std::string& str)
+{
+    for (size_t i = 0; i < str.size(); ++i) {
+        int sizeLength = isSize(str.c_str(), i);
+        if (sizeLength > 0 && i + sizeLength < str.size() - 1 && str[i + sizeLength] == ' ' && str[i + sizeLength + 1] == 'x') {
+            str.erase(i + sizeLength, 1); // Erase one space character at the specified position
+        }
+    }
+}
+
+bool LoopParser::isSizeValid(const char *sizeStr)
+{
+    if (std::strncmp(sizeStr, "XXL", 3) == 0) return true;
+    if (std::strncmp(sizeStr, "XL", 2) == 0) return true;
+    if (*sizeStr == 'L') return true;
+    if (*sizeStr == 'M') return true;
+    if (*sizeStr == 'S') return true;
+    return false;
+}
+
+bool LoopParser::CheckValidSize(const char *str)
+{
+    const char *pForStr = str;
+    while (*pForStr) {
+        if (std::isalpha(*pForStr)) {
+            if (!isSizeValid(pForStr)) {
+                std::cerr << "Invalid pizza size found: Command cancelled." << std::endl;
+                return false;
+            }
+
+            while (*pForStr && !std::isspace(*pForStr)) ++pForStr;
+            ++pForStr;
+        }
+    }
+
+    return true;
+}
+bool LoopParser::isSize(const char *str, int i)
+{
+    if (strncmp(&str[i], "XXL", 3) == 0 && (str[i+3] == ' ' || str[i+3] == '\0' || str[i+3] == 'x')) return true;
+
+    if (strncmp(&str[i], "XL", 2) == 0 && (str[i+2] == ' ' || str[i+2] == '\0' || str[i+2] == 'x')) return true;
+
+    if (str[i] == 'L' && (str[i+1] == ' ' || str[i+1] == '\0' || str[i+1] == 'x')) return true;
+
+    if (str[i] == 'M' && (str[i+1] == ' ' || str[i+1] == '\0' || str[i+1] == 'x')) return true;
+
+    if (str[i] == 'S' && (str[i+1] == ' ' || str[i+1] == '\0' || str[i+1] == 'x')) return true;
+
+    return false;
+}
 
 std::string& LoopParser::trim(std::string& str)
 {
@@ -80,33 +149,6 @@ std::string& LoopParser::trim(std::string& str)
     if (first == std::string::npos || last == std::string::npos) return str;
     return str = str.substr(first, (last - first + 1));
 }
-
-/** @brief function still in developement*/
-/*
-void LoopParser::OrderHandling()
-{
-    Order *OrderTypes;
-    std::istringstream commandStream(_OrderInput);
-
-    while (std::getline(commandStream, _tmpStrCommand, ';')) { // Découpe chaque commande individuellement pour clean la str
-        std::istringstream detailStream(_tmpStrCommand);
-        OrderTypes->type;
-        OrderTypes->size;
-        OrderTypes->quantity;
-
-        if (!(detailStream >> OrderTypes->type >> OrderTypes->size >> OrderTypes->quantity)) {
-            std::cerr << "Failed to parse command: " << _tmpStrCommand << std::endl;
-            continue;
-        }
-
-        OrderTypes->size.pop_back(); // Ici je Supp le dernier caractère qui est 'x'
-        OrderTypes->quantity = std::stoi(OrderTypes->size.substr(OrderTypes->size.find('x') + 1));
-        OrderTypes->size = OrderTypes->size.substr(0, OrderTypes->size.find('x')); //Sa nous permet de recup la taille sans la qt
-
-        OrdersToList(OrderTypes->type, OrderTypes->size, OrderTypes->quantity);
-    }
-}
-*/
 
 void LoopParser::OrdersToList(const std::string& type, const std::string& size, int quantity)
 {
@@ -122,7 +164,6 @@ void LoopParser::OrdersToList(const std::string& type, const std::string& size, 
         current->next = newOrder;
     }
 }
-
 
 void LoopParser::PrintDebug() const
 {
