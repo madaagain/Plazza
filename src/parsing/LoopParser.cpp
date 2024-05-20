@@ -95,7 +95,7 @@ void LoopParser::formatOrder(std::string& str)
     for (size_t i = 0; i < str.size(); ++i) {
         int sizeLength = isSize(str.c_str(), i);
         if (sizeLength > 0 && i + sizeLength < str.size() - 1 && str[i + sizeLength] == ' ' && str[i + sizeLength + 1] == 'x') {
-            str.erase(i + sizeLength, 1); // Erase one space character at the specified position
+            str.erase(i + sizeLength, 1);
         }
     }
 }
