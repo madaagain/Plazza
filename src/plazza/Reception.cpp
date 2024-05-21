@@ -18,8 +18,15 @@ Reception::Reception(int numCooksPerKitchen, int ingredientRegenerationTime, flo
 Reception::~Reception()
 {
 
+
 }
 
+void Reception::initValue()
+{
+    _ingredientRegenerationTime = 0;
+    _numCooksPerKitchen = 0;
+    _cookingTimeMultiplier = 0;
+}
 void Reception::createKitchen()
 {
     pid_t pid = fork();

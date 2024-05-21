@@ -34,7 +34,7 @@ void LoopParser::ArgCommandLine()
         return;
     }
 
-    PrintDebug(); // Ici je Display les Order de pizza dans la liste
+    //PrintDebug(); // Ici je Display les Order de pizza dans la liste
     std::cout << "Processing command: " << _OrderInput << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "Command processed." << std::endl;
@@ -63,14 +63,14 @@ bool LoopParser::OrderHandling()
         int quantity;
 
         if (!(detailStream >> type >> sizeQuantity)) {
-            std::cerr << "Failed to parse command: " << tmpStrCommand << std::endl;
+            std::cerr << "Failed to parse maybe your command is invalid please may you reformulate your order: " << tmpStrCommand << std::endl;
             allCommandsValid = false;
             continue;
         }
 
         size_t xPos = sizeQuantity.find('x');
         if (xPos == std::string::npos || xPos == 0 || xPos == sizeQuantity.size() - 1) {
-            std::cerr << "Invalid size and quantity format in command: " << tmpStrCommand << std::endl;
+            std::cerr << "Invalid pizza size and quantity format in command: " << tmpStrCommand << std::endl;
             allCommandsValid = false;
             continue;
         }
@@ -79,7 +79,6 @@ bool LoopParser::OrderHandling()
             size = sizeQuantity.substr(0, xPos);
             quantity = std::stoi(sizeQuantity.substr(xPos + 1));
         } catch (const std::exception& e) {
-            std::cerr << "Error parsing size or quantity from '" << sizeQuantity << "' in command: " << tmpStrCommand << std::endl;
             allCommandsValid = false;
             continue;
         }

@@ -26,6 +26,7 @@ class Reception {
         std::string _OrderInput;
         int _ingredientRegenerationTime;
         float _cookingTimeMultiplier;
+        void initValue();
         std::string _inputLine;
         std::vector<pid_t> _pids;
 };
