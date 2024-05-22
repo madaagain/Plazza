@@ -10,7 +10,7 @@
 
 Reception::Reception(int numCooksPerKitchen, int ingredientRegenerationTime, float cookingTimeMultiplier) :
     _numCooksPerKitchen(numCooksPerKitchen), _ingredientRegenerationTime(ingredientRegenerationTime),
-      _cookingTimeMultiplier(cookingTimeMultiplier)
+      _cookingTimeMultiplier(cookingTimeMultiplier), _nextKitchenId(0)
 {
     std::cout << "Reception created." << std::endl;
 }
@@ -29,14 +29,21 @@ void Reception::initValue()
 }
 void Reception::createKitchen()
 {
-    pid_t pid = fork();
+    Process process;
 
-    if (pid == 0) {
-        std::cout << "CREATED KITCHEN\n";
-        exit(0);
-    } else if (pid > 0) {
-    } else {
-        std::cerr << "Failed to fork a new kitchen process." << std::endl;
+    try {
+        process.forkProcess();
+
+        if (process.isChild()) {
+            std::cout << "CREATED KITCHEN\n";
+            Kitchen kitchen(_nextKitchenId, _numCooksPerKitchen, _ingredientRegenerationTime, _cookingTimeMultiplier);
+            _exit(0);
+        } else if (process.isParent()) {
+            _pids.push_back(_nextKitchenId);
+            _nextKitchenId++;
+        }
+    } catch (const std::exception &e) {
+        throw e;
     }
 }
 
@@ -51,6 +58,7 @@ void Reception::printHelp()
 void Reception::start()
 {
     std::cout << "Welcome to Plazza's Pizzas, may we have your order ?" << std::endl;
+    createKitchen();
     LoopParser OrderParser;
 
     while (true)

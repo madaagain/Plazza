@@ -9,19 +9,22 @@
     #define COOK_HPP_
     #include "PthreadThread.hpp"
 
+class Kitchen;
 class Cook : public PthreadThread
 {
     public:
-        Cook(int id);
+        Cook(int id, Kitchen& kitchen);
         ~Cook();
         void setBusy(bool state);
         bool isBusy() const;
+        void start();
 
-        static void* cookRoutine(void* arg);
 
     protected:
     private:
+        Kitchen& _kitchen;
         bool _busy;
+        static void* cookRoutine(void* arg);
 };
 
 #endif /* !COOK_HPP_ */

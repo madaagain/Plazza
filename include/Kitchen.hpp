@@ -11,11 +11,29 @@
     #include <unistd.h>
     #include <exception>
     #include <string>
+    #include <map>
+    #include <vector>
+    #include <chrono>
+    #include <thread>
+    #include "Cook.hpp"
+    #include "Pthreadmutex.hpp"
+    #include "PthreadThread.hpp"
 
 class Kitchen {
     public:
-        Kitchen();
+        Kitchen(int id, int numCooks, int ingredientRegenerationTime, float cookingTimeMultiplier);
         ~Kitchen();
+        void createCooks();
+        void addPizza(int pizzaType);
+        void processOrders();
+        bool isFull() const;
+        bool isActive() const;
+        void closeKitchen();
+        void startThreads();
+        void stopThreads();
+        void displayStatus() const;
+
+        static void* stockRegeneration(void* arg);
 
     class KitchenException : public std::exception
         {
@@ -29,26 +47,20 @@ class Kitchen {
                 };
                 ~KitchenException() {};
         };
-    class Stock
-        {
-            public:
-                Stock() : 
-                dough(5), gruyere(5), tomato(5), ham(5), mushroom(5), steak(5), eggplant(5), cheese(5)
-                {};
-                ~Stock() {};
-                int dough;
-                int gruyere;
-                int tomato;
-                int ham;
-                int mushroom;
-                int steak;
-                int eggplant;
-                int cheese;
-        };
     protected:
     private:
-        int _pid;
-        Stock _stock;
+        std::map<std::string, int> _ingredients;
+        int _kitchenId;
+        int _maxPizzas;
+        int _numCooks;
+        int _pizzasInQueue;
+        int _ingredientRegenerationTime;
+        bool _active;
+        float _cookingTimeMultiplier;
+        std::vector<Cook> _cooks;
+        Pthreadmutex _mtx;
+        PthreadThread _inactivitythread;
+        PthreadThread _stockthread;
 };
 
 #endif /* !KITCHEN_HPP_ */
