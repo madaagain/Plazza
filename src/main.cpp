@@ -17,10 +17,7 @@ int main(int ac, char **av)
         Parser args(ac, av);
         Reception recep(args.getnbcooks(), args.getstocktimer(), args.getcookingtime());
         recep.start();
-    } catch (std::exception &e)
-        LoopClass loop;
-        loop.Loop();
-    } 
+    }
     catch (const std::exception &e)
     {
         std::cerr << "Error: " << e.what() << std::endl;

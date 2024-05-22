@@ -18,6 +18,7 @@ class PthreadThread {
         void start(void *(*routine)(void *));
         void join();
         int getId() const;
+        pthread_t *getThread();
 
     protected:
     private:

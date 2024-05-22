@@ -7,6 +7,8 @@
 
 #ifndef RECEPTION_HPP_
     #define RECEPTION_HPP_
+    #include "Process.hpp"
+    #include <Kitchen.hpp>
     #include <vector>
     #include <unistd.h>
     #include <sys/wait.h>
@@ -25,6 +27,7 @@ class Reception {
         int _numCooksPerKitchen;
         int _ingredientRegenerationTime;
         float _cookingTimeMultiplier;
+        int _nextKitchenId;
         std::vector<pid_t> _pids;
 };
 

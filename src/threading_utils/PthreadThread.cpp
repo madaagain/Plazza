@@ -31,6 +31,12 @@ void PthreadThread::join()
     pthread_join(_workerThread, nullptr);
 }
 
-int PthreadThread::getId() const {
+int PthreadThread::getId() const
+{
     return _id;
+}
+
+pthread_t* PthreadThread::getThread()
+{
+    return &_workerThread;
 }

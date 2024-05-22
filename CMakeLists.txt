@@ -12,6 +12,7 @@ add_executable(plazza
         src/main.cpp
         src/threading_utils/Pthreadmutex.cpp
         src/threading_utils/PthreadThread.cpp
+        src/threading_utils/Process.cpp
         src/parsing/Parser.cpp
         src/plazza/Kitchen.cpp
         src/plazza/Reception.cpp
