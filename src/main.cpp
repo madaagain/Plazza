@@ -7,7 +7,6 @@
 
 #include "Parser.hpp"
 #include "Reception.hpp"
-#include "LoopClass.hpp"
 #include "LoopParser.hpp"
 
 int main(int ac, char **av)

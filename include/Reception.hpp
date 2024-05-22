@@ -25,9 +25,12 @@ class Reception {
     protected:
     private:
         int _numCooksPerKitchen;
+        std::string _OrderInput;
         int _ingredientRegenerationTime;
         float _cookingTimeMultiplier;
         int _nextKitchenId;
+        void initValue();
+        std::string _inputLine;
         std::vector<pid_t> _pids;
 };
 
