@@ -26,7 +26,7 @@ class LoopParser {
         void PrintDebug() const;
         std::string& trim(std::string& str);
         bool CheckValidSize(const char *str);
-        bool isSizeValid(const char *sizeStr);
+        bool isSizeValid(const std::string& command, const std::vector<std::string>& validSizes);
         //std::string removeSpacesAroundX(const std::string& input);
         void formatOrder(std::string& str);
         bool isSize(const char *str, int i);

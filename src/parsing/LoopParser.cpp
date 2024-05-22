@@ -34,7 +34,7 @@ void LoopParser::ArgCommandLine()
         return;
     }
 
-    //PrintDebug(); // Ici je Display les Order de pizza dans la liste
+    PrintDebug(); // Ici je Display les Order de pizza dans la liste
     std::cout << "Processing command: " << _OrderInput << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "Command processed." << std::endl;
@@ -46,13 +46,10 @@ bool LoopParser::OrderHandling()
     std::string tmpStrCommand;
     bool allCommandsValid = true;
 
-    /** @brief Not functionnal error condition checker
-     * 
     if (!CheckValidSize(_OrderInput.c_str())) {
         std::cerr << "Order rejected due to invalid pizza size." << std::endl;
         return false;
     }
-    */
 
     while (std::getline(commandStream, tmpStrCommand, ';')) {
         formatOrder(tmpStrCommand);
@@ -99,33 +96,37 @@ void LoopParser::formatOrder(std::string& str)
     }
 }
 
-bool LoopParser::isSizeValid(const char *sizeStr)
+bool LoopParser::isSizeValid(const std::string& command, const std::vector<std::string>& validSizes)
 {
-    if (std::strncmp(sizeStr, "XXL", 3) == 0) return true;
-    if (std::strncmp(sizeStr, "XL", 2) == 0) return true;
-    if (*sizeStr == 'L') return true;
-    if (*sizeStr == 'M') return true;
-    if (*sizeStr == 'S') return true;
+    for (const auto& size : validSizes) {
+        std::string spaceBefore = " " + size + " ";
+        std::string start = size + " ";
+        std::string end = " " + size;
+
+        if (command.find(spaceBefore) != std::string::npos ||
+            command.find(start) == 0 ||
+            command.rfind(end) + size.length() == command.length()) {
+            return true;
+        }
+    }
+
+    std::cerr << "Invalid pizza size found in command: " << command << std::endl;
     return false;
 }
 
 bool LoopParser::CheckValidSize(const char *str)
 {
-    const char *pForStr = str;
-    while (*pForStr) {
-        if (std::isalpha(*pForStr)) {
-            if (!isSizeValid(pForStr)) {
-                std::cerr << "Invalid pizza size found: Command cancelled." << std::endl;
-                return false;
-            }
+    std::string command(str);
+    std::vector<std::string> validSizes = {"S", "M", "L", "XL", "XXL"};
 
-            while (*pForStr && !std::isspace(*pForStr)) ++pForStr;
-            ++pForStr;
-        }
+    if (!isSizeValid(command, validSizes)) {
+        std::cerr << "Command cancelled." << std::endl;
+        return false;
     }
 
     return true;
 }
+
 bool LoopParser::isSize(const char *str, int i)
 {
     if (strncmp(&str[i], "XXL", 3) == 0 && (str[i+3] == ' ' || str[i+3] == '\0' || str[i+3] == 'x')) return true;
