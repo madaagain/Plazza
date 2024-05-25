@@ -7,6 +7,8 @@
 
 #ifndef LOOPPARSER_HPP_
 #define LOOPPARSER_HPP_
+#define buff_max 25
+#define mod %
 
 #include <iostream>
 #include <stdexcept>
@@ -14,6 +16,8 @@
 #include <chrono>
 #include <sstream>
 #include <cctype>
+#include <mutex>
+#include <vector>
 
 class LoopParser {
     public:
@@ -31,9 +35,20 @@ class LoopParser {
         void formatOrder(std::string& str);
         bool isSize(const char *str, int i);
         void clearOrders();
+
+
+        /** @addtogroup Internal process communication*/
+        void consumerProcess();
+        void producerProcess();
     protected:
     std::string _OrderInput;
     std::string _tmpStrCommand;
+
+    /** @addtogroup Internal process communication*/
+    std::atomic<int> _free_index{0};
+    std::atomic<int> _full_index{0};
+    std::mutex mtx;
+
     private:
         struct Order {
             std::string type;

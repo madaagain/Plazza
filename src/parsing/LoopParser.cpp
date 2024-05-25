@@ -40,6 +40,38 @@ void LoopParser::ArgCommandLine()
     std::cout << "Command processed." << std::endl;
 }
 
+void LoopParser::producerProcess()
+{
+    Order *new_order;
+
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        while (((_free_index + 1) mod buff_max) == _full_index) {
+        // Buffer is full, wait for consumer
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        mtx.lock();
+        _free_index = (_free_index + 1) mod buff_max;
+        mtx.unlock();
+    }
+}
+
+void LoopParser::consumerProcess()
+{
+  Order *consumed_item;
+  while (true) {
+    while (_free_index == _full_index) {
+      // Buffer is empty, wait for producer
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    mtx.lock();
+    _full_index = (_full_index + 1) mod buff_max;
+    mtx.unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  }
+}
+
 bool LoopParser::OrderHandling()
 {
     std::istringstream commandStream(_OrderInput);
