@@ -61,9 +61,41 @@ void* Kitchen::stockRegeneration(void* arg) {
         std::this_thread::sleep_for(std::chrono::milliseconds(kitchen->_ingredientRegenerationTime));
         for (auto& item : kitchen->_ingredients) {
             std::cout << item.first << std::endl;
-            // item.second += 1;
+            item.second += 1;
         }
         std::cout << "Kitchen " << kitchen->_kitchenId << " regenerated stock." << std::endl;
     }
     return nullptr;
+}
+
+Pthreadmutex& Kitchen::getMtx()
+{
+    return _mtx;
+}
+
+pthread_cond_t& Kitchen::getCond()
+{
+    return _cond;
+}
+
+std::queue<int>& Kitchen::getQueue()
+{
+    return _pizzaQueue;
+}
+
+void Kitchen::setPizzasinQueue()
+{
+    _pizzasInQueue--;
+}
+
+float Kitchen::getMultiplier() const
+{
+    return _cookingTimeMultiplier;
+}
+
+void Kitchen::closeKitchen()
+{
+    _active = false;
+    pthread_cond_broadcast(&_cond);
+    stopThreads();
 }

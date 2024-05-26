@@ -15,6 +15,7 @@
     #include <vector>
     #include <chrono>
     #include <thread>
+    #include <queue>
     #include "Cook.hpp"
     #include "Pthreadmutex.hpp"
     #include "PthreadThread.hpp"
@@ -32,6 +33,13 @@ class Kitchen {
         void startThreads();
         void stopThreads();
         void displayStatus() const;
+
+        Pthreadmutex& getMtx();
+        pthread_cond_t& getCond();
+        std::queue<int>& getQueue();
+        float getMultiplier() const;
+
+        void setPizzasinQueue();
 
         static void* stockRegeneration(void* arg);
 
@@ -61,6 +69,8 @@ class Kitchen {
         Pthreadmutex _mtx;
         PthreadThread _inactivitythread;
         PthreadThread _stockthread;
+        pthread_cond_t _cond;
+        std::queue<int> _pizzaQueue;
 };
 
 #endif /* !KITCHEN_HPP_ */

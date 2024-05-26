@@ -59,12 +59,12 @@ void Reception::start()
 {
     std::cout << "Welcome to Plazza's Pizzas, may we have your order ?" << std::endl;
     createKitchen();
-    LoopParser OrderParser;
+    // LoopParser OrderParser;
 
     while (true)
     {
         std::getline(std::cin, _inputLine);
-        OrderParser.setOrderInput(_inputLine); //Ca nous permet de pouvoir ensuite de save l'input pour la str dans _OrderInput 
+        // OrderParser.setOrderInput(_inputLine); //Ca nous permet de pouvoir ensuite de save l'input pour la str dans _OrderInput 
 
         if (_inputLine == "help")
         {
@@ -76,7 +76,7 @@ void Reception::start()
             break;
         }
 
-        OrderParser.ArgCommandLine();
+        // OrderParser.ArgCommandLine();
     }
 }
 
