@@ -52,6 +52,7 @@ void Kitchen::stopThreads() {
 
 void Kitchen::startThreads() {
     _stockthread.start(&Kitchen::stockRegeneration);
+    pthread_cond_init(&_cond, nullptr);
 }
 
 void* Kitchen::stockRegeneration(void* arg) {
@@ -101,22 +102,27 @@ void Kitchen::closeKitchen()
 }
 
 void Kitchen::addPizza(int pizzaType) {
-    _mtx.lock();
     if (_pizzasInQueue < _maxPizzas) {
         _pizzaQueue.push(pizzaType);
         _pizzasInQueue++;
+        std::cout << "Pizza added to the queue. Signaling condition variable." << std::endl;
         pthread_cond_signal(&_cond);
+        _ipc.sendMessage(_kitchenId, "OK");
     } else {
+        std::cout << "wrong cond\n";
         _ipc.sendMessage(_kitchenId, "KITCHEN_FULL");
     }
-    _mtx.unlock();
 }
 
 void Kitchen::receiveOrders()
 {
     std::string order;
-    while (true) {
-        order = _ipc.receiveMessage(0);
+    while (isActive()) {
+        _mtx.lock();
+        std::cout << "Kitchen ready for orders\n";
+        order = _ipc.receiveMessage(_kitchenId);
+        std::cout << "Received order :" << order << std::endl;
         addPizza(1);
+        _mtx.unlock();
     }
 }

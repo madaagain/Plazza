@@ -24,11 +24,13 @@ void* Cook::cookRoutine(void* arg)
     Kitchen& kitchen = cook->_kitchen;
 
     while (kitchen.isActive()) {
+        std::cout << "Cook looping\n";
         kitchen.getMtx().lock();
-        while (kitchen.getQueue().empty() && kitchen.isActive()) {
+        while (kitchen.getQueue().empty()) {
+            std::cout << "Cook waiting for orders\n";
             pthread_cond_wait(&(kitchen.getCond()), &(kitchen.getMtx().getMtx()));
         }
-
+        std::cout << "Cook looping 3\n"; // This should be reached after waking up
         if (!kitchen.getQueue().empty())
         {
             int pizza = kitchen.getQueue().front();
@@ -38,12 +40,9 @@ void* Cook::cookRoutine(void* arg)
             kitchen.getMtx().unlock();
 
             std::this_thread::sleep_for(std::chrono::seconds(static_cast<int>(3 * kitchen.getMultiplier())));
+            std::cout << "Cook delivered.";
             cook->setBusy(false);
-        } else
-        {
-            kitchen.getMtx().unlock();
         }
-        pthread_cond_signal(&kitchen.getCond());
     }
     return nullptr;
 }

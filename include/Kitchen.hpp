@@ -16,6 +16,8 @@
     #include <chrono>
     #include <thread>
     #include <queue>
+    #include <thread>
+    #include <atomic>
     #include "Cook.hpp"
     #include "Pthreadmutex.hpp"
     #include "PthreadThread.hpp"

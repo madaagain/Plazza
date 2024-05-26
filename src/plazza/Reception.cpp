@@ -35,7 +35,6 @@ void Reception::createKitchen()
         process.forkProcess();
 
         if (process.isChild()) {
-            std::cout << "CREATED KITCHEN\n";
             Kitchen kitchen(_nextKitchenId, _numCooksPerKitchen, _ingredientRegenerationTime, _cookingTimeMultiplier);
             kitchen.processOrders();
             kitchen.receiveOrders();
@@ -76,7 +75,7 @@ void Reception::start()
         {
             break;
         }
-        // OrderParser.ArgCommandLine();
+        OrderParser.ArgCommandLine();
         allocateOrder(_inputLine);
     }
 }
@@ -84,12 +83,18 @@ void Reception::start()
 void Reception::allocateOrder(const std::string& order)
 {
     for (int kitchenId : _pids) {
+        std::cout << "Sending order to kitchen " << kitchenId << std::endl;
         _ipc.sendMessage(kitchenId, order);
+        
         std::string response = _ipc.receiveMessage(kitchenId);
+        std::cout << "Awaiting response from kitchen\n";
+        std::cout << "Received response from kitchen " << kitchenId << ": " << response << std::endl;
+
         if (response == "KITCHEN_FULL") {
             continue;
+        } else {
+            return;
         }
-        _ipc.sendMessage(kitchenId, order);
         return;
     }
     createKitchen();
