@@ -35,7 +35,7 @@ void Reception::createKitchen()
         process.forkProcess();
 
         if (process.isChild()) {
-            Kitchen kitchen(_nextKitchenId, _numCooksPerKitchen, _ingredientRegenerationTime, _cookingTimeMultiplier);
+            Kitchen kitchen(_nextKitchenId, _numCooksPerKitchen, _ingredientRegenerationTime, _cookingTimeMultiplier, getpid());
             kitchen.processOrders();
             kitchen.receiveOrders();
             _exit(0);
@@ -64,7 +64,7 @@ void Reception::start()
     while (true)
     {
         std::getline(std::cin, _inputLine);
-        OrderParser.setOrderInput(_inputLine); //Ca nous permet de pouvoir ensuite de save l'input pour la str dans _OrderInput 
+        // OrderParser.setOrderInput(_inputLine); //Ca nous permet de pouvoir ensuite de save l'input pour la str dans _OrderInput 
 
         if (_inputLine == "help")
         {
@@ -75,13 +75,12 @@ void Reception::start()
         {
             break;
         }
-        OrderParser.ArgCommandLine();
+        // OrderParser.ArgCommandLine();
         allocateOrder(_inputLine);
     }
 }
 
-void Reception::allocateOrder(const std::string& order)
-{
+void Reception::allocateOrder(const std::string& order) {
     for (int kitchenId : _pids) {
         std::cout << "Sending order to kitchen " << kitchenId << std::endl;
         _ipc.sendMessage(kitchenId, order);
@@ -91,11 +90,12 @@ void Reception::allocateOrder(const std::string& order)
         std::cout << "Received response from kitchen " << kitchenId << ": " << response << std::endl;
 
         if (response == "KITCHEN_FULL") {
+            std::cout << kitchenId << std::endl;
             continue;
         } else {
+            std::cout << "Received acknowledgment from kitchen: " << response << std::endl;
             return;
         }
-        return;
     }
     createKitchen();
     allocateOrder(order);

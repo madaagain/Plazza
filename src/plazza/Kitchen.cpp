@@ -7,10 +7,10 @@
 
 #include "Kitchen.hpp"
 
-Kitchen::Kitchen(int id, int numCooks, int ingredientRegenerationTime, float cookingTimeMultiplier)
+Kitchen::Kitchen(int id, int numCooks, int ingredientRegenerationTime, float cookingTimeMultiplier, pid_t recep)
     : _kitchenId(id), _maxPizzas(2 * numCooks), _numCooks(numCooks), _pizzasInQueue(0),
     _ingredientRegenerationTime(ingredientRegenerationTime), _active(true),
-    _cookingTimeMultiplier(cookingTimeMultiplier), _inactivitythread(0), _stockthread(1)
+    _cookingTimeMultiplier(cookingTimeMultiplier), _inactivitythread(0), _stockthread(1), _recep(recep)
 {
     _ingredients = {{"dough", 5}, {"tomato", 5}, {"cheese", 5}, {"ham", 5}, {"mushrooms", 5}};
     createCooks();
@@ -107,10 +107,9 @@ void Kitchen::addPizza(int pizzaType) {
         _pizzasInQueue++;
         std::cout << "Pizza added to the queue. Signaling condition variable." << std::endl;
         pthread_cond_signal(&_cond);
-        _ipc.sendMessage(_kitchenId, "OK");
+        _ipc.sendMessage(0, "OK");
     } else {
-        std::cout << "wrong cond\n";
-        _ipc.sendMessage(_kitchenId, "KITCHEN_FULL");
+        _ipc.sendMessage(0, "KITCHEN_FULL");
     }
 }
 

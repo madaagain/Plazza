@@ -26,7 +26,7 @@
 
 class Kitchen {
     public:
-        Kitchen(int id, int numCooks, int ingredientRegenerationTime, float cookingTimeMultiplier);
+        Kitchen(int id, int numCooks, int ingredientRegenerationTime, float cookingTimeMultiplier, pid_t recep);
         ~Kitchen();
         void createCooks();
         void addPizza(int pizzaType);
@@ -78,6 +78,7 @@ class Kitchen {
         std::queue<int> _pizzaQueue;
         LoopParser OrderParser;
         IPC _ipc;
+        pid_t _recep;
 };
 
 #endif /* !KITCHEN_HPP_ */

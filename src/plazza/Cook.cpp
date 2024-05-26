@@ -26,7 +26,7 @@ void* Cook::cookRoutine(void* arg)
     while (kitchen.isActive()) {
         std::cout << "Cook looping\n";
         kitchen.getMtx().lock();
-        while (kitchen.getQueue().empty()) {
+        if (kitchen.getQueue().empty()) {
             std::cout << "Cook waiting for orders\n";
             pthread_cond_wait(&(kitchen.getCond()), &(kitchen.getMtx().getMtx()));
         }
