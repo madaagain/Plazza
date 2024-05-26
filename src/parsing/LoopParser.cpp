@@ -34,42 +34,13 @@ void LoopParser::ArgCommandLine()
         return;
     }
 
-    PrintDebug(); // Ici je Display les Order de pizza dans la liste
-    std::cout << "Processing command: " << _OrderInput << std::endl;
+    addToBuffer(_OrderInput);
+    std::cout << "Command posted to buffer: " << _OrderInput << std::endl;
+
+    //PrintDebug();
+    /** PrintDebug(); @attention Pour afficher les elements dans la liste */
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "Command processed." << std::endl;
-}
-
-void LoopParser::producerProcess()
-{
-    Order *new_order;
-
-    while (true)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        while (((_free_index + 1) mod buff_max) == _full_index) {
-        // Buffer is full, wait for consumer
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        mtx.lock();
-        _free_index = (_free_index + 1) mod buff_max;
-        mtx.unlock();
-    }
-}
-
-void LoopParser::consumerProcess()
-{
-  Order *consumed_item;
-  while (true) {
-    while (_free_index == _full_index) {
-      // Buffer is empty, wait for producer
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-    mtx.lock();
-    _full_index = (_full_index + 1) mod buff_max;
-    mtx.unlock();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  }
 }
 
 bool LoopParser::OrderHandling()
@@ -77,6 +48,8 @@ bool LoopParser::OrderHandling()
     std::istringstream commandStream(_OrderInput);
     std::string tmpStrCommand;
     bool allCommandsValid = true;
+    std::string type, size;
+    int quantity;
 
     if (!CheckValidSize(_OrderInput.c_str())) {
         std::cerr << "Order rejected due to invalid pizza size." << std::endl;
@@ -118,6 +91,31 @@ bool LoopParser::OrderHandling()
     return allCommandsValid;
 }
 
+LoopParser::Order* LoopParser::CreateOrderFromInput()
+{
+    std::string type, size;
+    int quantity;
+
+
+    if (!OrderHandling()) {
+        return nullptr;
+    }
+
+    return new LoopParser::Order(type, size, quantity);
+
+}
+
+void LoopParser::PrintDebug() const
+{
+    Order *current = headOrder;
+
+    while (current != nullptr) {
+        std::cout << "Order: " << current->type << ", Size: " << current->size << ", Quantity: " << current->quantity << std::endl;
+        current = current->next;
+    }
+}
+
+/** @attention This a function for Parsing and format not related to the threading process [DO NOT MODIFY] */
 void LoopParser::formatOrder(std::string& str)
 {
     for (size_t i = 0; i < str.size(); ++i) {
@@ -128,6 +126,7 @@ void LoopParser::formatOrder(std::string& str)
     }
 }
 
+/** @attention This a function for Parsing and format not related to the threading process [DO NOT MODIFY] */
 bool LoopParser::isSizeValid(const std::string& command, const std::vector<std::string>& validSizes)
 {
     for (const auto& size : validSizes) {
@@ -146,6 +145,7 @@ bool LoopParser::isSizeValid(const std::string& command, const std::vector<std::
     return false;
 }
 
+/** @attention This a function for Parsing and format not related to the threading process [DO NOT MODIFY] */
 bool LoopParser::CheckValidSize(const char *str)
 {
     std::string command(str);
@@ -159,6 +159,7 @@ bool LoopParser::CheckValidSize(const char *str)
     return true;
 }
 
+/** @attention This a function for Parsing and format not related to the threading process [DO NOT MODIFY] */
 bool LoopParser::isSize(const char *str, int i)
 {
     if (strncmp(&str[i], "XXL", 3) == 0 && (str[i+3] == ' ' || str[i+3] == '\0' || str[i+3] == 'x')) return true;
@@ -174,6 +175,7 @@ bool LoopParser::isSize(const char *str, int i)
     return false;
 }
 
+/** @attention This a function for Parsing and format not related to the threading process [DO NOT MODIFY] */
 std::string& LoopParser::trim(std::string& str)
 {
     size_t first = str.find_first_not_of(' ');
@@ -182,6 +184,7 @@ std::string& LoopParser::trim(std::string& str)
     return str = str.substr(first, (last - first + 1));
 }
 
+/** @attention This a function for Parsing and format not related to the threading process [DO NOT MODIFY] */
 void LoopParser::OrdersToList(const std::string& type, const std::string& size, int quantity)
 {
     Order* newOrder = new Order(type, size, quantity);
@@ -197,16 +200,7 @@ void LoopParser::OrdersToList(const std::string& type, const std::string& size, 
     }
 }
 
-void LoopParser::PrintDebug() const
-{
-    Order *current = headOrder;
-
-    while (current != nullptr) {
-        std::cout << "Order: " << current->type << ", Size: " << current->size << ", Quantity: " << current->quantity << std::endl;
-        current = current->next;
-    }
-}
-
+/** @attention This a function for Parsing and format not related to the threading process [DO NOT MODIFY] */
 void LoopParser::clearOrders()
 {
     Order* current = headOrder;

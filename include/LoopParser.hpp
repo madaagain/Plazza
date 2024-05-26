@@ -20,11 +20,25 @@
 #include <vector>
 
 class LoopParser {
+
+    struct Order {
+        std::string type;
+        std::string size;
+        int quantity;
+        Order* next;
+            Order(const std::string& t, const std::string& s, int q) : type(t), size(s), quantity(q), next(nullptr) {}
+        };
+        Order* buff[buff_max];
+        Order* headOrder;
     public:
+
         LoopParser();
         virtual ~LoopParser();
         void ArgCommandLine();
+        void addToBuffer(const std::string& orderDetails);
+        //void addToBuffer();
         void OrdersToList(const std::string& type, const std::string& size, int quantity);
+        Order *CreateOrderFromInput();
         bool OrderHandling();
         void setOrderInput(const std::string& input);
         void PrintDebug() const;
@@ -33,6 +47,7 @@ class LoopParser {
         bool isSizeValid(const std::string& command, const std::vector<std::string>& validSizes);
         //std::string removeSpacesAroundX(const std::string& input);
         void formatOrder(std::string& str);
+        //void addToBuffer(const std::string& orderDetails);
         bool isSize(const char *str, int i);
         void clearOrders();
 
@@ -49,18 +64,6 @@ class LoopParser {
     std::atomic<int> _full_index{0};
     std::mutex mtx;
 
-    private:
-        struct Order {
-            std::string type;
-            std::string size;
-            int quantity;
-            Order* next;
-
-            Order(const std::string& t, const std::string& s, int q) : type(t), size(s), quantity(q), next(nullptr) {}
-        };
-
-        Order* headOrder;
-    };
-
+};
 
 #endif /* !LOOPPARSER_HPP_ */
