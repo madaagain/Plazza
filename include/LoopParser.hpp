@@ -15,6 +15,7 @@
 #include <thread>
 #include <chrono>
 #include <sstream>
+#include <cstring>
 #include <cctype>
 #include <mutex>
 #include <vector>

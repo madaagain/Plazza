@@ -19,6 +19,8 @@
     #include "Cook.hpp"
     #include "Pthreadmutex.hpp"
     #include "PthreadThread.hpp"
+    #include "IPC.hpp"
+    #include "LoopParser.hpp"
 
 class Kitchen {
     public:
@@ -33,6 +35,7 @@ class Kitchen {
         void startThreads();
         void stopThreads();
         void displayStatus() const;
+        void receiveOrders();
 
         Pthreadmutex& getMtx();
         pthread_cond_t& getCond();
@@ -71,6 +74,8 @@ class Kitchen {
         PthreadThread _stockthread;
         pthread_cond_t _cond;
         std::queue<int> _pizzaQueue;
+        LoopParser OrderParser;
+        IPC _ipc;
 };
 
 #endif /* !KITCHEN_HPP_ */

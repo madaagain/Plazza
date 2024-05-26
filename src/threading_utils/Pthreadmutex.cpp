@@ -31,3 +31,8 @@ void Pthreadmutex::trylock()
 {
     pthread_mutex_trylock(&_mutex);
 }
+
+pthread_mutex_t& Pthreadmutex::getMtx()
+{
+    return _mutex;
+}

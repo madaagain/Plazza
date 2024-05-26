@@ -18,6 +18,8 @@ class Pthreadmutex : public Imutex{
         void unlock() override;
         void trylock() override;
 
+        pthread_mutex_t& getMtx();
+
     protected:
     private:
         pthread_mutex_t _mutex;

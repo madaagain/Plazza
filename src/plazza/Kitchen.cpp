@@ -99,3 +99,24 @@ void Kitchen::closeKitchen()
     pthread_cond_broadcast(&_cond);
     stopThreads();
 }
+
+void Kitchen::addPizza(int pizzaType) {
+    _mtx.lock();
+    if (_pizzasInQueue < _maxPizzas) {
+        _pizzaQueue.push(pizzaType);
+        _pizzasInQueue++;
+        pthread_cond_signal(&_cond);
+    } else {
+        _ipc.sendMessage(_kitchenId, "KITCHEN_FULL");
+    }
+    _mtx.unlock();
+}
+
+void Kitchen::receiveOrders()
+{
+    std::string order;
+    while (true) {
+        order = _ipc.receiveMessage(0);
+        addPizza(1);
+    }
+}

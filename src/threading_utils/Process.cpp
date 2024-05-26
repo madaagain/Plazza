@@ -53,3 +53,7 @@ bool Process::isChild() const {
 bool Process::isParent() const {
     return pid > 0;
 }
+
+pid_t Process::getPid() const {
+    return pid;
+}

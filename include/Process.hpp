@@ -21,6 +21,7 @@ class Process {
         void waitProcess();
         bool isChild() const;
         bool isParent() const;
+        pid_t getPid() const;
 
     protected:
     private:

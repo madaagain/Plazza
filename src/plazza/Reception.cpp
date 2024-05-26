@@ -37,10 +37,12 @@ void Reception::createKitchen()
         if (process.isChild()) {
             std::cout << "CREATED KITCHEN\n";
             Kitchen kitchen(_nextKitchenId, _numCooksPerKitchen, _ingredientRegenerationTime, _cookingTimeMultiplier);
+            kitchen.processOrders();
+            kitchen.receiveOrders();
             _exit(0);
         } else if (process.isParent()) {
-            _pids.push_back(_nextKitchenId);
-            _nextKitchenId++;
+            pid_t childPid = process.getPid();
+            _pids.push_back(childPid);
         }
     } catch (const std::exception &e) {
         throw e;
@@ -59,12 +61,11 @@ void Reception::start()
 {
     std::cout << "Welcome to Plazza's Pizzas, may we have your order ?" << std::endl;
     createKitchen();
-    // LoopParser OrderParser;
 
     while (true)
     {
         std::getline(std::cin, _inputLine);
-        // OrderParser.setOrderInput(_inputLine); //Ca nous permet de pouvoir ensuite de save l'input pour la str dans _OrderInput 
+        OrderParser.setOrderInput(_inputLine); //Ca nous permet de pouvoir ensuite de save l'input pour la str dans _OrderInput 
 
         if (_inputLine == "help")
         {
@@ -75,8 +76,22 @@ void Reception::start()
         {
             break;
         }
-
         // OrderParser.ArgCommandLine();
+        allocateOrder(_inputLine);
     }
 }
 
+void Reception::allocateOrder(const std::string& order)
+{
+    for (int kitchenId : _pids) {
+        _ipc.sendMessage(kitchenId, order);
+        std::string response = _ipc.receiveMessage(kitchenId);
+        if (response == "KITCHEN_FULL") {
+            continue;
+        }
+        _ipc.sendMessage(kitchenId, order);
+        return;
+    }
+    createKitchen();
+    allocateOrder(order);
+}
